@@ -1,0 +1,64 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model CaseStudy {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  category    String   // e.g., "SEO", "PPC", "Growth"
+  clientName  String
+  heroImage   String   // Cloudinary secure URL
+  summary     String
+  metrics     Json     // e.g., { "ROI": "450%", "Leads Generated": "+12k" }
+  content     String   // Markdown or rich-text data
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id         String   @id @default(cuid())
+  author     String
+  role       String   // e.g., "CMO at TechCorp"
+  avatarUrl  String?
+  quote      String
+  companyLog String?
+  createdAt  DateTime @default(now())
+}
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model WorkExperience {
+  id          String   @id @default(cuid())
+  company     String
+  role        String
+  startDate   String
+  endDate     String?
+  current     Boolean  @default(false)
+  description String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  type        String   // "award" | "dashboard"
+  title       String
+  description String?
+  imageUrl    String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}

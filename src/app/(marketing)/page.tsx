@@ -5,6 +5,10 @@ import { HeroSection } from "./_components/hero";
 import { AchievementsSection } from "./_components/achievements-section";
 import type { CaseStudy, Testimonial, WorkExperience, Achievement } from "@/lib/types";
 
+// Content is managed through the admin dashboard, so the homepage must always
+// reflect the current database rather than a build-time snapshot.
+export const dynamic = "force-dynamic";
+
 async function getCaseStudies(): Promise<CaseStudy[]> {
   try {
     return (await db.caseStudy.findMany({

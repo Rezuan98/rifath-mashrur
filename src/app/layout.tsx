@@ -1,16 +1,39 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
+import { getSettings } from "@/lib/settings";
 
 const geist = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Studio — Digital Marketing",
-  description: "Data-driven digital marketing campaigns that convert.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { metaTitle, metaDescription, faviconUrl, ogImage } = await getSettings();
+
+  const metadata: Metadata = {
+    title: metaTitle,
+    description: metaDescription,
+    // Custom favicon from Settings, else the default in /public.
+    icons: { icon: faviconUrl || "/favicon.ico" },
+  };
+
+  if (ogImage) {
+    metadata.openGraph = {
+      title: metaTitle,
+      description: metaDescription,
+      images: [ogImage],
+    };
+    metadata.twitter = {
+      card: "summary_large_image",
+      title: metaTitle,
+      description: metaDescription,
+      images: [ogImage],
+    };
+  }
+
+  return metadata;
+}
 
 export default function RootLayout({
   children,

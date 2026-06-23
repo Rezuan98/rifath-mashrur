@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { getSettings } from "@/lib/settings";
 import { HeroSection } from "./_components/hero";
 import { AchievementsSection } from "./_components/achievements-section";
 import type { CaseStudy, Testimonial, WorkExperience, Achievement } from "@/lib/types";
@@ -71,17 +72,18 @@ const services = [
 ];
 
 export default async function HomePage() {
-  const [caseStudies, testimonials, experiences, achievements] = await Promise.all([
+  const [caseStudies, testimonials, experiences, achievements, settings] = await Promise.all([
     getCaseStudies(),
     getTestimonials(),
     getExperiences(),
     getAchievements(),
+    getSettings(),
   ]);
 
   return (
     <>
       {/* Hero */}
-      <HeroSection />
+      <HeroSection name={settings.brandName} profileImage={settings.profileImage} />
 
       {/* Work */}
       <section id="work" className="px-4 sm:px-8 py-16 sm:py-24 max-w-6xl mx-auto w-full">
@@ -264,11 +266,22 @@ export default async function HomePage() {
             tailored to your business.
           </p>
           <a
-            href="mailto:hello@studio.com"
+            href={`mailto:${settings.email}`}
             className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-green text-canvas font-bold text-base sm:text-lg hover:bg-green/80 transition-colors"
           >
-            hello@studio.com ↗
+            {settings.email} ↗
           </a>
+          {settings.phone && (
+            <p className="mt-6 text-cream/50 text-sm">
+              Or call{" "}
+              <a
+                href={`tel:${settings.phone.replace(/\s+/g, "")}`}
+                className="text-green hover:underline"
+              >
+                {settings.phone}
+              </a>
+            </p>
+          )}
         </div>
       </section>
     </>

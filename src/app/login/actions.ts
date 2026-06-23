@@ -2,6 +2,8 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
+import { verifyPassword } from "@/lib/auth";
 
 export async function login(
   _prevState: { error: string } | null,
@@ -9,7 +11,28 @@ export async function login(
 ): Promise<{ error: string }> {
   const password = formData.get("password") as string;
 
-  if (!password || password !== process.env.ADMIN_PASSWORD) {
+  // Prefer the password set in admin Settings; fall back to ADMIN_PASSWORD
+  // env only when no custom password has been saved (so the old default
+  // stops working once a real one is set).
+  let ok = false;
+  let hasCustomPassword = false;
+  try {
+    const row = await db.siteSettings.findUnique({
+      where: { id: "singleton" },
+      select: { passwordHash: true },
+    });
+    if (row?.passwordHash) {
+      hasCustomPassword = true;
+      ok = verifyPassword(password ?? "", row.passwordHash);
+    }
+  } catch {
+    // DB unreachable → fall through to env password as recovery
+  }
+  if (!hasCustomPassword) {
+    ok = !!password && password === process.env.ADMIN_PASSWORD;
+  }
+
+  if (!ok) {
     return { error: "Invalid password." };
   }
 

@@ -14,7 +14,13 @@ const stats = [
   { value: "$2M+", label: "Ad Spend Managed" },
 ];
 
-export function HeroSection() {
+export function HeroSection({
+  name = "Rifat Mashrur",
+  profileImage = "/images/profile.jpg",
+}: {
+  name?: string;
+  profileImage?: string;
+}) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -85,12 +91,13 @@ export function HeroSection() {
                 style={{ borderRadius: "50%", overflow: "hidden" }}
               >
                 <Image
-                  src="/images/profile.jpg"
-                  alt="Rifath Mashrur – Digital Marketer & Strategist"
+                  src={profileImage}
+                  alt={`${name} – Digital Marketer & Strategist`}
                   fill
                   className="object-cover object-top"
                   sizes="160px"
                   priority
+                  unoptimized
                 />
                 <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-canvas/60 to-transparent" />
                 <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-canvas/90 border border-green/25">
@@ -105,7 +112,7 @@ export function HeroSection() {
             </p>
 
             <h1 style={up(0.28)} className="text-[clamp(2.6rem,7vw,5.5rem)] font-extrabold tracking-[-0.035em] leading-[0.9] text-cream mb-2">
-              Rifath Mashrur
+              {name}
             </h1>
 
             <div style={up(0.36)}>
@@ -155,12 +162,13 @@ export function HeroSection() {
                 style={{ borderRadius: "50%", overflow: "hidden" }}
               >
                 <Image
-                  src="/images/profile.jpg"
-                  alt="Rifath Mashrur – Digital Marketer & Strategist"
+                  src={profileImage}
+                  alt={`${name} – Digital Marketer & Strategist`}
                   fill
                   className="object-cover object-top"
                   sizes="(max-width: 1280px) 380px, 420px"
                   priority
+                  unoptimized
                 />
                 <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-canvas/65 to-transparent" />
               </div>

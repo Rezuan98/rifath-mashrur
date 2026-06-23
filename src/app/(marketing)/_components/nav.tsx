@@ -12,7 +12,7 @@ const links = [
   { href: "/#contact",      label: "Contact" },
 ];
 
-export function MarketingNav() {
+export function MarketingNav({ name }: { name: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [open,     setOpen]     = useState(false);
 
@@ -54,7 +54,7 @@ export function MarketingNav() {
               <span className="w-1.5 h-1.5 bg-green" />
             </span>
             <span className="font-bold text-sm tracking-tight text-cream group-hover:text-green transition-colors">
-              Rifath Mashrur
+              {name}
             </span>
           </Link>
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Mail, MessageSquareQuote, Briefcase, Trophy, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Mail, MessageSquareQuote, Briefcase, Trophy, Settings, LogOut } from "lucide-react";
 import { logout } from "@/app/login/actions";
 
 const navItems = [
@@ -12,9 +12,10 @@ const navItems = [
   { href: "/admin/experience",    label: "Experience",    icon: Briefcase },
   { href: "/admin/achievements",  label: "Achievements",  icon: Trophy },
   { href: "/admin/messages",      label: "Messages",      icon: Mail },
+  { href: "/admin/settings",      label: "Settings",      icon: Settings },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ brandName }: { brandName: string }) {
   const pathname = usePathname();
 
   return (
@@ -26,7 +27,7 @@ export function AdminSidebar() {
         >
           ← Back to site
         </Link>
-        <p className="text-cream font-semibold text-sm tracking-tight">Studio</p>
+        <p className="text-cream font-semibold text-sm tracking-tight">{brandName}</p>
         <p className="text-cream/30 text-xs mt-0.5">Admin Dashboard</p>
       </div>
 

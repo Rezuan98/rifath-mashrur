@@ -1,9 +1,14 @@
 @import "tailwindcss";
 
-@theme inline {
+/* Brand colors — NOT inline, so utilities compile to var(--color-*). That lets
+   the public site override them at runtime (see the marketing layout). */
+@theme {
   --color-canvas: #1A1917;
   --color-cream:  #F5EFE0;
   --color-green:  #7CFC00;   /* lawn green — replaces #6EC98A */
+}
+
+@theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
@@ -48,10 +53,10 @@
 }
 
 body {
-  background-color: #1A1917;
-  color: #F5EFE0;
+  background-color: var(--color-canvas);
+  color: var(--color-cream);
 }
 ::selection {
-  background: #7CFC00;
-  color: #1A1917;
+  background: var(--color-green);
+  color: var(--color-canvas);
 }

@@ -8,12 +8,18 @@ interface Props {
   name?: string;
   defaultValue?: string;
   label?: string;
+  /** When true, the field is not required and the label drops the "*". */
+  optional?: boolean;
+  /** Optional helper text shown under the upload control. */
+  hint?: string;
 }
 
 export function ImageUploadField({
   name = "imageUrl",
   defaultValue = "",
   label = "Image",
+  optional = false,
+  hint,
 }: Props) {
   const [url, setUrl] = useState(defaultValue);
   const [uploading, setUploading] = useState(false);
@@ -35,10 +41,10 @@ export function ImageUploadField({
   return (
     <div>
       <label className="block text-cream/50 text-xs mb-1.5 tracking-widest uppercase">
-        {label} *
+        {label}{optional ? "" : " *"}
       </label>
 
-      <input type="hidden" name={name} value={url} required={!url} />
+      <input type="hidden" name={name} value={url} required={!optional && !url} />
 
       {url && (
         <div className="relative mb-3 w-full h-48 bg-cream/[0.04] border border-cream/[0.1] overflow-hidden">
@@ -81,6 +87,8 @@ export function ImageUploadField({
       {error && (
         <p className="mt-2 text-red-400 text-xs">{error}</p>
       )}
+
+      {hint && <p className="mt-2 text-cream/30 text-xs">{hint}</p>}
     </div>
   );
 }

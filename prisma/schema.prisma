@@ -62,3 +62,22 @@ model Achievement {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
 }
+
+// Singleton row (id = "singleton") holding editable site-wide settings.
+model SiteSettings {
+  id              String   @id @default("singleton")
+  brandName       String   @default("Rifat Mashrur")
+  metaTitle       String   @default("Rifat Mashrur — Digital Marketing")
+  metaDescription String   @default("Data-driven digital marketing campaigns that convert.")
+  tagline         String   @default("Data-driven digital marketing.")
+  email           String   @default("hello@studio.com")
+  phone           String   @default("")
+  colorCanvas     String   @default("#1A1917") // page background
+  colorCream      String   @default("#F5EFE0") // primary text
+  colorGreen      String   @default("#7CFC00") // brand accent
+  profileImage    String   @default("") // hero / about photo URL
+  faviconUrl      String   @default("") // browser tab icon URL
+  ogImage         String   @default("") // social share (Open Graph) image URL
+  passwordHash    String?  // scrypt "salt:hash"; null → fall back to ADMIN_PASSWORD env
+  updatedAt       DateTime @updatedAt
+}

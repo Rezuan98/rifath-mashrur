@@ -14,6 +14,10 @@ async function updateSettings(formData: FormData) {
     metaTitle:       (formData.get("metaTitle")       as string).trim(),
     metaDescription: (formData.get("metaDescription") as string).trim(),
     tagline:         (formData.get("tagline")         as string).trim(),
+    workTitle:        (formData.get("workTitle")        as string).trim() || "Selected Work",
+    workSubtitle:     (formData.get("workSubtitle")     as string).trim(),
+    servicesTitle:    (formData.get("servicesTitle")    as string).trim() || "What I Do",
+    servicesSubtitle: (formData.get("servicesSubtitle") as string).trim(),
     email:           (formData.get("email")           as string).trim(),
     phone:           (formData.get("phone")           as string).trim(),
     colorCanvas:     (formData.get("colorCanvas")     as string).trim() || "#1A1917",
@@ -96,6 +100,45 @@ export default async function SettingsPage({
             name="tagline"
             defaultValue={s.tagline}
             placeholder="Data-driven digital marketing."
+          />
+        </section>
+
+        {/* ── Homepage sections ─────────────────────────────────── */}
+        <section className="flex flex-col gap-5">
+          <h2 className="text-cream/50 text-xs tracking-widest uppercase border-b border-cream/[0.07] pb-2">
+            Homepage Sections
+          </h2>
+          <p className="text-cream/30 text-xs -mt-2">
+            Headings for the two homepage sections. Their contents are managed in{" "}
+            <a href="/admin/case-studies" className="text-cream/50 hover:text-green transition-colors">Case Studies</a>{" "}
+            and{" "}
+            <a href="/admin/services" className="text-cream/50 hover:text-green transition-colors">Services</a>.
+          </p>
+          <Field
+            label="Work Section Heading"
+            name="workTitle"
+            defaultValue={s.workTitle}
+            placeholder="Selected Work"
+          />
+          <Textarea
+            label="Work Section Intro"
+            name="workSubtitle"
+            defaultValue={s.workSubtitle}
+            placeholder="Optional line under the heading."
+            hint="Leave blank to hide it."
+          />
+          <Field
+            label="Services Section Heading"
+            name="servicesTitle"
+            defaultValue={s.servicesTitle}
+            placeholder="What I Do"
+          />
+          <Textarea
+            label="Services Section Intro"
+            name="servicesSubtitle"
+            defaultValue={s.servicesSubtitle}
+            placeholder="Full-stack digital marketing capabilities built to work together."
+            hint="Leave blank to hide it."
           />
         </section>
 

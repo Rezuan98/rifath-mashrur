@@ -7,19 +7,31 @@ import { DataNetwork } from "./data-network";
 
 const E = "cubic-bezier(0.25,0.1,0,1)";
 
-const stats = [
-  { value: "5+",   label: "Years Experience" },
-  { value: "50+",  label: "Brands Grown" },
-  { value: "3×",   label: "Avg. ROI" },
-  { value: "$2M+", label: "Ad Spend Managed" },
-];
+/* ── Type scale ────────────────────────────────────────────────────
+   One fluid scale for the whole hero. Every step is clamp(min, vw, max)
+   so sizes ramp smoothly from a 320px phone to a 1536px+ display with no
+   breakpoint jumps and no horizontal overflow. Ratio ≈ 1.5 between the
+   name and the role headline, which keeps the hierarchy readable:
+   eyebrow → name → role headline (the dominant element) → body.        */
+const TYPE = {
+  eyebrow: "clamp(0.625rem, 1.5vw, 0.75rem)",
+  name:    "clamp(1.5rem, 5.2vw, 2.75rem)",
+  role:    "clamp(2rem, 7.6vw, 4.25rem)",
+  body:    "clamp(0.9375rem, 1.6vw, 1.125rem)",
+  stat:    "clamp(1.25rem, 3vw, 1.75rem)",
+  statTag: "clamp(0.5625rem, 1.2vw, 0.6875rem)",
+} as const;
+
+type StatItem = { value: string; label: string };
 
 export function HeroSection({
   name = "Rifat Mashrur",
   profileImage = "/images/profile.jpg",
+  stats = [],
 }: {
   name?: string;
   profileImage?: string;
+  stats?: StatItem[];
 }) {
   const [show, setShow] = useState(false);
 
@@ -42,7 +54,7 @@ export function HeroSection({
   });
 
   return (
-    <section className="relative min-h-screen flex flex-col bg-canvas overflow-hidden">
+    <section className="relative min-h-[100svh] flex flex-col bg-canvas overflow-hidden">
 
       {/* ── Background layers ─────────────────────────────────── */}
       <div
@@ -68,26 +80,28 @@ export function HeroSection({
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-canvas to-transparent pointer-events-none z-[3]" aria-hidden />
 
       {/* ── Content ───────────────────────────────────────────── */}
-      <div className="relative z-10 flex-1 flex items-center px-4 sm:px-8 lg:px-16 xl:px-20 pt-24 sm:pt-28 lg:pt-32 pb-8 w-full max-w-7xl mx-auto">
+      <div className="relative z-10 flex-1 flex items-center px-5 sm:px-8 lg:px-16 xl:px-20 pt-24 sm:pt-28 lg:pt-32 pb-10 w-full max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px] gap-8 lg:gap-14 xl:gap-20 items-center w-full">
 
           {/* ── Left: copy ──────────────────────────────────────── */}
-          <div>
+          <div className="min-w-0">
             {/* Available badge */}
             <div
               style={up(0.1)}
-              className="inline-flex items-center gap-2.5 mb-8 sm:mb-10 px-4 py-2 border border-green/25 bg-green/[0.05]"
+              className="inline-flex items-center gap-2.5 mb-7 sm:mb-9 px-3.5 sm:px-4 py-2 border border-green/30 bg-green/[0.06]"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-green animate-dot-blink shrink-0" />
-              <span className="text-green text-[11px] tracking-[0.22em] uppercase font-bold">
+              <span
+                className="text-green text-[10px] sm:text-[11px] tracking-[0.18em] sm:tracking-[0.22em] uppercase font-bold"
+              >
                 Available for New Projects
               </span>
             </div>
 
             {/* Mobile photo */}
-            <div style={fx(0.14)} className="lg:hidden mb-8 flex justify-start">
+            <div style={fx(0.14)} className="lg:hidden mb-7 sm:mb-9 flex justify-start">
               <div
-                className="relative w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] border border-cream/[0.1] shrink-0"
+                className="relative w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] border border-cream/[0.12] shrink-0"
                 style={{ borderRadius: "50%", overflow: "hidden" }}
               >
                 <Image
@@ -100,54 +114,70 @@ export function HeroSection({
                   unoptimized
                 />
                 <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-canvas/60 to-transparent" />
-                <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-canvas/90 border border-green/25">
+                <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-canvas/90 border border-green/30">
                   <span className="w-1 h-1 rounded-full bg-green" style={{ boxShadow: "0 0 5px #7CFC00" }} />
                   <span className="text-green text-[9px] font-bold tracking-wider uppercase">Open</span>
                 </div>
               </div>
             </div>
 
-            <p style={up(0.2)} className="text-cream/35 text-xs font-semibold tracking-[0.28em] uppercase mb-2">
+            {/* Eyebrow + name read as ONE unit: tight 4px gap between them,
+                then a deliberate gap before the role headline below. */}
+            <p
+              style={{ ...up(0.2), fontSize: TYPE.eyebrow }}
+              className="text-cream/55 font-semibold tracking-[0.3em] uppercase mb-1"
+            >
               Hi, I&apos;m
             </p>
 
-            <h1 style={up(0.28)} className="text-[clamp(2.6rem,7vw,5.5rem)] font-extrabold tracking-[-0.035em] leading-[0.9] text-cream mb-2">
+            <h1
+              style={{ ...up(0.28), fontSize: TYPE.name }}
+              className="font-bold tracking-[-0.02em] leading-[1.08] text-cream mb-4 sm:mb-5 text-balance [overflow-wrap:anywhere]"
+            >
               {name}
             </h1>
 
+            {/* Role headline — two lines, one unit */}
             <div style={up(0.36)}>
               <h2
-                className="text-[clamp(1.8rem,5vw,4rem)] font-extrabold tracking-[-0.03em] leading-[0.92] text-transparent bg-clip-text mb-1"
+                className="font-extrabold tracking-[-0.035em] leading-[0.95] text-transparent bg-clip-text"
                 style={{
-                  backgroundImage: "linear-gradient(118deg, #7CFC00 0%, #5cd600 45%, rgba(124,252,0,0.38) 100%)",
+                  fontSize: TYPE.role,
+                  backgroundImage: "linear-gradient(118deg, #7CFC00 0%, #5cd600 45%, rgba(124,252,0,0.55) 100%)",
                 }}
               >
                 Digital Marketer
               </h2>
             </div>
 
-            <h2 style={up(0.43)} className="text-[clamp(1.8rem,5vw,4rem)] font-extrabold tracking-[-0.03em] leading-[0.92] text-cream/45 mb-8 sm:mb-10">
+            <h2
+              style={{ ...up(0.43), fontSize: TYPE.role }}
+              className="font-extrabold tracking-[-0.035em] leading-[0.95] text-cream/60"
+            >
               &amp; Strategist
             </h2>
 
-            <p style={up(0.5)} className="text-cream/45 text-base sm:text-lg leading-relaxed max-w-[400px] mb-10 sm:mb-12">
+            <p
+              style={{ ...up(0.5), fontSize: TYPE.body }}
+              className="text-cream/65 leading-relaxed max-w-[46ch] mt-7 sm:mt-8 text-pretty"
+            >
               I turn data into decisions and attention into revenue —
               building campaigns that compound over time.
             </p>
 
-            <div style={up(0.57)} className="flex flex-wrap items-center gap-5">
+            <div style={up(0.57)} className="flex flex-wrap items-center gap-x-6 gap-y-4 mt-9 sm:mt-11">
               <Link
                 href="/#work"
-                className="group inline-flex items-center gap-3 px-6 sm:px-7 py-3.5 bg-green text-canvas font-bold text-sm hover:bg-green/80 transition-colors"
+                className="group inline-flex items-center gap-3 px-6 sm:px-7 py-3.5 bg-green text-canvas font-bold text-sm sm:text-base hover:bg-green/80 transition-colors"
               >
                 View My Work
-                <span className="text-canvas/60 group-hover:translate-x-1 transition-transform inline-block">→</span>
+                <span className="text-canvas/70 group-hover:translate-x-1 transition-transform inline-block">→</span>
               </Link>
               <Link
                 href="/#contact"
-                className="group inline-flex items-center gap-3 text-sm text-cream/45 hover:text-cream transition-colors"
+                className="group inline-flex items-center gap-3 text-sm sm:text-base text-cream/65 hover:text-cream transition-colors"
               >
-                <span className="w-8 h-px bg-cream/20 group-hover:w-12 group-hover:bg-cream/50 transition-all" />
+                <span className="w-8 h-px bg-cream/30 group-hover:w-12 group-hover:bg-cream/60 transition-all" />
                 Let&apos;s Talk
               </Link>
             </div>
@@ -191,29 +221,45 @@ export function HeroSection({
         </div>
       </div>
 
-      {/* ── Stats row ─────────────────────────────────────────── */}
-      <div
-        style={up(0.72)}
-        className="relative z-10 px-4 sm:px-8 lg:px-16 xl:px-20 pb-12 sm:pb-16 w-full max-w-7xl mx-auto"
-      >
-        <div className="grid grid-cols-2 sm:grid-cols-4 border border-cream/[0.07] divide-x divide-y sm:divide-y-0 divide-cream/[0.07]">
-          {stats.map((s) => (
-            <div key={s.label} className="px-4 sm:px-6 py-4 sm:py-5 bg-cream/[0.02]">
-              <p className="text-green font-extrabold text-xl sm:text-2xl tabular-nums">{s.value}</p>
-              <p className="text-cream/[0.38] text-[10px] sm:text-[11px] mt-1.5 tracking-[0.18em] uppercase">
-                {s.label}
-              </p>
-            </div>
-          ))}
+      {/* ── Stats row ─────────────────────────────────────────────
+          Borders live on the cells (bottom + right) with the outer top/left
+          on the wrapper, so the grid stays complete at any column count and
+          any number of stats — unlike divide-x, which mis-draws on wrap. */}
+      {stats.length > 0 && (
+        <div
+          style={up(0.72)}
+          className="relative z-10 px-5 sm:px-8 lg:px-16 xl:px-20 pb-12 sm:pb-16 w-full max-w-7xl mx-auto"
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-l border-cream/[0.12]">
+            {stats.map((s) => (
+              <div
+                key={`${s.value}-${s.label}`}
+                className="border-b border-r border-cream/[0.12] bg-cream/[0.03] px-4 py-4 sm:px-5 sm:py-5"
+              >
+                <p
+                  className="text-green font-extrabold tabular-nums leading-none"
+                  style={{ fontSize: TYPE.stat }}
+                >
+                  {s.value}
+                </p>
+                <p
+                  className="text-cream/60 mt-2 tracking-[0.16em] uppercase leading-snug"
+                  style={{ fontSize: TYPE.statTag }}
+                >
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Scroll indicator ──────────────────────────────────── */}
-      <div className="hidden sm:flex absolute bottom-8 left-8 lg:left-16 xl:left-20 z-10 items-center gap-3">
-        <div className="relative w-px h-12 bg-cream/[0.08] overflow-hidden">
+      <div className="hidden sm:flex absolute bottom-5 left-8 lg:left-16 xl:left-20 z-10 items-center gap-3">
+        <div className="relative w-px h-9 bg-cream/[0.12] overflow-hidden">
           <div className="absolute inset-x-0 bg-green animate-scroll-drip" style={{ height: "35%" }} />
         </div>
-        <span className="text-cream/[0.18] text-[10px] tracking-[0.28em] uppercase">Scroll</span>
+        <span className="text-cream/40 text-[10px] tracking-[0.28em] uppercase">Scroll</span>
       </div>
     </section>
   );

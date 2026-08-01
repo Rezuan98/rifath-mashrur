@@ -63,6 +63,25 @@ model Achievement {
   createdAt   DateTime @default(now())
 }
 
+// One cell of the hero stats row, e.g. value "$2M+" / label "Ad Spend Managed".
+model HeroStat {
+  id        String   @id @default(cuid())
+  value     String
+  label     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// One card in the "What I Do" section.
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String   @default("◈") // single glyph shown above the title
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
 // Singleton row (id = "singleton") holding editable site-wide settings.
 model SiteSettings {
   id              String   @id @default("singleton")
@@ -70,6 +89,11 @@ model SiteSettings {
   metaTitle       String   @default("Rifat Mashrur — Digital Marketing")
   metaDescription String   @default("Data-driven digital marketing campaigns that convert.")
   tagline         String   @default("Data-driven digital marketing.")
+  // Homepage section headings — editable so the sections aren't hard-coded.
+  workTitle        String  @default("Selected Work")
+  workSubtitle     String  @default("")
+  servicesTitle    String  @default("What I Do")
+  servicesSubtitle String  @default("Full-stack digital marketing capabilities built to work together.")
   email           String   @default("hello@studio.com")
   phone           String   @default("")
   colorCanvas     String   @default("#1A1917") // page background

@@ -54,3 +54,20 @@ export type Achievement = {
   order: number
   createdAt: Date
 }
+
+export type HeroStat = {
+  id: string
+  value: string
+  label: string
+  order: number
+  createdAt: Date
+}
+
+export type Service = {
+  id: string
+  title: string
+  description: string
+  icon: string
+  order: number
+  createdAt: Date
+}

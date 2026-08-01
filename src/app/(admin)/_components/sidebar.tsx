@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Mail, MessageSquareQuote, Briefcase, Trophy, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Mail, MessageSquareQuote, Briefcase, Trophy, Settings, LogOut, BarChart3, Sparkles } from "lucide-react";
 import { logout } from "@/app/login/actions";
 
 const navItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/stats",         label: "Hero Stats",    icon: BarChart3 },
   { href: "/admin/case-studies", label: "Case Studies", icon: FileText },
+  { href: "/admin/services",      label: "Services",      icon: Sparkles },
   { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
   { href: "/admin/experience",    label: "Experience",    icon: Briefcase },
   { href: "/admin/achievements",  label: "Achievements",  icon: Trophy },

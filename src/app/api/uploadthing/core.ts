@@ -7,11 +7,15 @@ export const ourFileRouter = {
   achievementImage: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
     .middleware(async ({ req }) => {
       const cookie = req.headers.get("cookie") ?? "";
-      const session = cookie
+      // Take everything after the first "=" and decode it: cookie values are
+      // URL-encoded when set, and splitting on "=" would truncate any secret
+      // containing one (e.g. base64 padding).
+      const raw = cookie
         .split(";")
         .map((c) => c.trim())
         .find((c) => c.startsWith("admin_session="))
-        ?.split("=")[1];
+        ?.slice("admin_session=".length);
+      const session = raw ? decodeURIComponent(raw) : undefined;
 
       if (!session || session !== process.env.ADMIN_SECRET) {
         throw new UploadThingError("Unauthorized");

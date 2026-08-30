@@ -30,8 +30,10 @@ export function MarketingNav({ name }: { name: string }) {
     maxWidth:        scrolled ? "1000px"                    : "1440px",
     paddingTop:      scrolled ? "10px"                      : "18px",
     paddingBottom:   scrolled ? "10px"                      : "18px",
-    paddingLeft:     scrolled ? "24px"                      : "52px",
-    paddingRight:    scrolled ? "24px"                      : "52px",
+    // Fluid so a 320px phone doesn't lose ~100px of the bar to padding
+    // while wide screens keep the roomy inset.
+    paddingLeft:     scrolled ? "clamp(16px,4vw,24px)"      : "clamp(20px,5vw,52px)",
+    paddingRight:    scrolled ? "clamp(16px,4vw,24px)"      : "clamp(20px,5vw,52px)",
     marginTop:       scrolled ? "12px"                      : "0px",
     backgroundColor: scrolled ? "rgba(26,25,23,0.97)"       : "rgba(26,25,23,0.75)",
     boxShadow:       scrolled ? "0 8px 40px rgba(0,0,0,0.5)": "none",
@@ -49,11 +51,11 @@ export function MarketingNav({ name }: { name: string }) {
           className="w-full flex items-center justify-between backdrop-blur-xl border-b"
         >
           {/* Brand */}
-          <Link href="/" onClick={close} className="group flex items-center gap-2.5 shrink-0">
-            <span className="w-5 h-5 border border-green/50 flex items-center justify-center group-hover:border-green transition-colors">
+          <Link href="/" onClick={close} className="group flex items-center gap-2.5 min-w-0 mr-3">
+            <span className="w-5 h-5 shrink-0 border border-green/50 flex items-center justify-center group-hover:border-green transition-colors">
               <span className="w-1.5 h-1.5 bg-green" />
             </span>
-            <span className="font-bold text-sm tracking-tight text-cream group-hover:text-green transition-colors">
+            <span className="font-bold text-sm tracking-tight text-cream group-hover:text-green transition-colors truncate">
               {name}
             </span>
           </Link>
@@ -73,7 +75,7 @@ export function MarketingNav({ name }: { name: string }) {
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/#contact"
               onClick={close}

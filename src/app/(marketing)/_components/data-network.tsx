@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 /* Data-flow network — nodes, dashed connections, travelling packets,
    and a periodically highlighted "decision path" (brightest chain). */
 
-const G = "124,252,0"; // green RGB values
+const FALLBACK_RGB = "124,252,0"; // used only if the CSS var is unreadable
 
 interface NodeData {
   x: number; y: number;
@@ -18,6 +18,24 @@ interface Pkt {
   t: number; s: number; // progress (0–1) / speed
 }
 
+/** Read the live brand accent (set per-site in admin Settings) as "r,g,b".
+    Canvas has no access to CSS vars, so resolve it once from the element. */
+function accentRgb(el: Element): string {
+  const raw = getComputedStyle(el).getPropertyValue("--color-green").trim();
+  if (!raw) return FALLBACK_RGB;
+  const hex = raw.replace("#", "");
+  if (/^[0-9a-f]{3}$/i.test(hex)) {
+    const [r, g, b] = hex.split("").map((c) => parseInt(c + c, 16));
+    return `${r},${g},${b}`;
+  }
+  if (/^[0-9a-f]{6}$/i.test(hex)) {
+    return `${parseInt(hex.slice(0, 2), 16)},${parseInt(hex.slice(2, 4), 16)},${parseInt(hex.slice(4, 6), 16)}`;
+  }
+  const m = raw.match(/rgba?\(([^)]+)\)/i);
+  if (m) return m[1].split(",").slice(0, 3).map((n) => n.trim()).join(",");
+  return FALLBACK_RGB;
+}
+
 export function DataNetwork({ className }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
@@ -26,6 +44,8 @@ export function DataNetwork({ className }: { className?: string }) {
     if (!cvs) return;
     const ctx = cvs.getContext("2d");
     if (!ctx) return;
+
+    const G = accentRgb(cvs);
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let W = 0, H = 0;

@@ -3,11 +3,21 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import slugify from "slugify";
+import { ImageUploadField } from "@/app/(admin)/_components/image-upload-field";
 
 async function createStudy(formData: FormData) {
   "use server";
   const title = (formData.get("title") as string).trim();
-  const slug = slugify(title, { lower: true, strict: true });
+
+  // `slug` is UNIQUE. Two studies with the same (or similarly punctuated)
+  // title used to blow up the whole action with a Prisma constraint error,
+  // which surfaces in the UI as "the Create button does nothing". Suffix
+  // until it's free instead; a title of pure punctuation slugifies to "".
+  const base = slugify(title, { lower: true, strict: true }) || "case-study";
+  let slug = base;
+  for (let n = 2; await db.caseStudy.findUnique({ where: { slug } }); n++) {
+    slug = `${base}-${n}`;
+  }
 
   const metrics: Record<string, string> = {};
   for (let i = 1; i <= 4; i++) {
@@ -68,10 +78,14 @@ export default function NewCaseStudyPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <Field label="Client Name *" name="clientName" placeholder="Acme Corp" required />
-          <Field label="Hero Image URL" name="heroImage" placeholder="https://…" />
-        </div>
+        <Field label="Client Name *" name="clientName" placeholder="Acme Corp" required />
+
+        <ImageUploadField
+          name="heroImage"
+          label="Hero Image"
+          optional
+          hint="Shown at the top of the case study page. Wide (16:9) images look best."
+        />
 
         <TextareaField label="Summary *" name="summary" rows={3} placeholder="One-paragraph overview of the project." required />
         <TextareaField label="Content (Markdown) *" name="content" rows={8} placeholder="## Challenge&#10;&#10;## Strategy&#10;&#10;## Results" required />
@@ -97,11 +111,18 @@ export default function NewCaseStudyPage() {
           </div>
         </div>
 
-        {/* Published */}
-        <label className="flex items-center gap-3 cursor-pointer group w-fit">
-          <input type="checkbox" name="published" className="accent-[#7CFC00] w-4 h-4" />
-          <span className="text-cream/60 text-sm group-hover:text-cream transition-colors">Publish immediately</span>
-        </label>
+        {/* Published — defaults ON: the Work section on the site only lists
+            published studies, so a draft looks like "nothing was added". */}
+        <div>
+          <label className="flex items-center gap-3 cursor-pointer group w-fit">
+            <input type="checkbox" name="published" defaultChecked className="accent-[#7CFC00] w-4 h-4" />
+            <span className="text-cream/60 text-sm group-hover:text-cream transition-colors">Publish immediately</span>
+          </label>
+          <p className="text-cream/30 text-xs mt-2">
+            Unpublished case studies stay as drafts and do not appear in the Work
+            section of your site. You can flip this any time from the list.
+          </p>
+        </div>
 
         <div className="flex items-center gap-4 pt-2">
           <button

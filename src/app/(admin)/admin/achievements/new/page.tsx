@@ -6,12 +6,17 @@ import { ImageUploadField } from "@/app/(admin)/_components/image-upload-field";
 
 async function createAchievement(formData: FormData) {
   "use server";
+  // Backstop: the browser blocks this via `required`, but never write an empty
+  // imageUrl — an achievement with no image breaks every place it renders.
+  const imageUrl = ((formData.get("imageUrl") as string) ?? "").trim();
+  if (!imageUrl) throw new Error("An image is required for an achievement.");
+
   await db.achievement.create({
     data: {
       type:        (formData.get("type")        as string),
       title:       (formData.get("title")       as string).trim(),
       description: (formData.get("description") as string).trim() || null,
-      imageUrl:    (formData.get("imageUrl")    as string).trim(),
+      imageUrl,
       order:       parseInt((formData.get("order") as string) || "0", 10),
     },
   });

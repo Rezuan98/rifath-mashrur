@@ -35,12 +35,13 @@ export default async function AdminCaseStudiesPage() {
         <div>
           <h1 className="text-2xl font-bold text-cream">Case Studies</h1>
           <p className="text-cream/40 text-sm mt-1">
-            {studies.length} total · {liveCount} published
+            {studies.length} total · {liveCount} published — published ones fill the
+            Work section of your site
           </p>
         </div>
         <Link
           href="/admin/case-studies/new"
-          className="px-4 py-2 bg-green text-canvas text-sm font-bold hover:bg-green/80 transition-colors"
+          className="px-4 py-2 bg-green text-canvas text-sm font-bold hover:bg-green/80 transition-colors shrink-0"
         >
           + New Case Study
         </Link>

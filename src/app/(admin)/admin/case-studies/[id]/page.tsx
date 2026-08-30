@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import { ImageUploadField } from "@/app/(admin)/_components/image-upload-field";
 import type { CaseStudy } from "@/lib/types";
 
 async function updateStudy(formData: FormData) {
@@ -81,10 +82,15 @@ export default async function EditCaseStudyPage({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <Field label="Client Name *" name="clientName" defaultValue={study.clientName} required />
-          <Field label="Hero Image URL" name="heroImage" defaultValue={study.heroImage} />
-        </div>
+        <Field label="Client Name *" name="clientName" defaultValue={study.clientName} required />
+
+        <ImageUploadField
+          name="heroImage"
+          label="Hero Image"
+          defaultValue={study.heroImage}
+          optional
+          hint="Shown at the top of the case study page. Wide (16:9) images look best."
+        />
 
         <TextareaField label="Summary *" name="summary" rows={3} defaultValue={study.summary} required />
         <TextareaField label="Content (Markdown) *" name="content" rows={8} defaultValue={study.content} required />

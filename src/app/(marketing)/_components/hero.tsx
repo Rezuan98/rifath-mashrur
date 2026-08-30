@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { DataNetwork } from "./data-network";
+import { isRenderableImage } from "@/lib/image";
 
 const E = "cubic-bezier(0.25,0.1,0,1)";
 
@@ -33,6 +34,9 @@ export function HeroSection({
   profileImage?: string;
   stats?: StatItem[];
 }) {
+  // Settings ships "" until a photo is chosen, and the default parameter only
+  // covers undefined — so fall back explicitly on anything unrenderable.
+  const photo = isRenderableImage(profileImage) ? profileImage : "/images/profile.jpg";
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -60,7 +64,8 @@ export function HeroSection({
       <div
         className="absolute inset-0 opacity-[0.12] pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(circle, #7CFC00 1px, transparent 1px)",
+          backgroundImage:
+            "radial-gradient(circle, var(--color-green) 1px, transparent 1px)",
           backgroundSize: "48px 48px",
         }}
         aria-hidden
@@ -72,8 +77,8 @@ export function HeroSection({
         preserveAspectRatio="none"
         aria-hidden
       >
-        <line x1="0"    y1="0"    x2="38%"  y2="100%" stroke="#7CFC00" strokeWidth="0.5" opacity="0.05" />
-        <line x1="100%" y1="0"    x2="63%"  y2="100%" stroke="#7CFC00" strokeWidth="0.5" opacity="0.04" />
+        <line x1="0"    y1="0"    x2="38%"  y2="100%" stroke="var(--color-green)" strokeWidth="0.5" opacity="0.05" />
+        <line x1="100%" y1="0"    x2="63%"  y2="100%" stroke="var(--color-green)" strokeWidth="0.5" opacity="0.04" />
       </svg>
       <div className="absolute top-24 right-6 sm:right-10 w-12 h-12 border-t border-r border-green/[0.18] pointer-events-none z-[2]" aria-hidden />
       <div className="absolute bottom-16 left-5 sm:left-8 w-10 h-10 border-b border-l border-green/[0.14] pointer-events-none z-[2]" aria-hidden />
@@ -98,14 +103,15 @@ export function HeroSection({
               </span>
             </div>
 
-            {/* Mobile photo */}
-            <div style={fx(0.14)} className="lg:hidden mb-7 sm:mb-9 flex justify-start">
+            {/* Mobile photo — the status chip sits BESIDE the circle, not on
+                top of it. Overlaid at this size it covered the subject's face. */}
+            <div style={fx(0.14)} className="lg:hidden mb-7 sm:mb-9 flex items-center gap-4 sm:gap-5">
               <div
-                className="relative w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] border border-cream/[0.12] shrink-0"
+                className="relative w-[128px] h-[128px] sm:w-[156px] sm:h-[156px] border border-cream/[0.12] shrink-0"
                 style={{ borderRadius: "50%", overflow: "hidden" }}
               >
                 <Image
-                  src={profileImage}
+                  src={photo}
                   alt={`${name} – Digital Marketer & Strategist`}
                   fill
                   className="object-cover object-top"
@@ -114,11 +120,16 @@ export function HeroSection({
                   unoptimized
                 />
                 <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-canvas/60 to-transparent" />
-                <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-canvas/90 border border-green/30">
-                  <span className="w-1 h-1 rounded-full bg-green" style={{ boxShadow: "0 0 5px #7CFC00" }} />
-                  <span className="text-green text-[9px] font-bold tracking-wider uppercase">Open</span>
-                </div>
               </div>
+              <span className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-canvas border border-green/30 shrink-0">
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-green shrink-0"
+                  style={{ boxShadow: "0 0 8px var(--color-green)" }}
+                />
+                <span className="text-green text-[9px] sm:text-[10px] font-bold tracking-widest uppercase whitespace-nowrap">
+                  Open to Work
+                </span>
+              </span>
             </div>
 
             {/* Eyebrow + name read as ONE unit: tight 4px gap between them,
@@ -143,7 +154,8 @@ export function HeroSection({
                 className="font-extrabold tracking-[-0.035em] leading-[0.95] text-transparent bg-clip-text"
                 style={{
                   fontSize: TYPE.role,
-                  backgroundImage: "linear-gradient(118deg, #7CFC00 0%, #5cd600 45%, rgba(124,252,0,0.55) 100%)",
+                  backgroundImage:
+                    "linear-gradient(118deg, var(--color-green) 0%, color-mix(in srgb, var(--color-green) 78%, #000) 45%, color-mix(in srgb, var(--color-green) 55%, transparent) 100%)",
                 }}
               >
                 Digital Marketer
@@ -192,7 +204,7 @@ export function HeroSection({
                 style={{ borderRadius: "50%", overflow: "hidden" }}
               >
                 <Image
-                  src={profileImage}
+                  src={photo}
                   alt={`${name} – Digital Marketer & Strategist`}
                   fill
                   className="object-cover object-top"
@@ -210,7 +222,7 @@ export function HeroSection({
               >
                 <span
                   className="w-1.5 h-1.5 rounded-full bg-green shrink-0"
-                  style={{ boxShadow: "0 0 8px #7CFC00" }}
+                  style={{ boxShadow: "0 0 8px var(--color-green)" }}
                 />
                 <span className="text-green text-[11px] font-bold tracking-widest uppercase">
                   Open to Work

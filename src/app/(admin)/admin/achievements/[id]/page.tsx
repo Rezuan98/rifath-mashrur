@@ -8,13 +8,16 @@ import { ImageUploadField } from "@/app/(admin)/_components/image-upload-field";
 async function updateAchievement(formData: FormData) {
   "use server";
   const id = formData.get("id") as string;
+  const imageUrl = ((formData.get("imageUrl") as string) ?? "").trim();
+  if (!imageUrl) throw new Error("An image is required for an achievement.");
+
   await db.achievement.update({
     where: { id },
     data: {
       type:        (formData.get("type")        as string),
       title:       (formData.get("title")       as string).trim(),
       description: (formData.get("description") as string).trim() || null,
-      imageUrl:    (formData.get("imageUrl")    as string).trim(),
+      imageUrl,
       order:       parseInt((formData.get("order") as string) || "0", 10),
     },
   });

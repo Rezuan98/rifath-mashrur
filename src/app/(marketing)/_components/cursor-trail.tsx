@@ -4,6 +4,26 @@ import { useEffect, useRef } from "react";
 
 /* Thin dashed-line doodle trail + dotted ring cursor.
    Only activates on devices with a fine pointer (mouse). */
+const FALLBACK_RGB = "124,252,0"; // used only if the CSS var is unreadable
+
+/** Read the live brand accent (set per-site in admin Settings) as "r,g,b".
+    Canvas has no access to CSS vars, so resolve it once from the element. */
+function accentRgb(el: Element): string {
+  const raw = getComputedStyle(el).getPropertyValue("--color-green").trim();
+  if (!raw) return FALLBACK_RGB;
+  const hex = raw.replace("#", "");
+  if (/^[0-9a-f]{3}$/i.test(hex)) {
+    const [r, g, b] = hex.split("").map((c) => parseInt(c + c, 16));
+    return `${r},${g},${b}`;
+  }
+  if (/^[0-9a-f]{6}$/i.test(hex)) {
+    return `${parseInt(hex.slice(0, 2), 16)},${parseInt(hex.slice(2, 4), 16)},${parseInt(hex.slice(4, 6), 16)}`;
+  }
+  const m = raw.match(/rgba?\(([^)]+)\)/i);
+  if (m) return m[1].split(",").slice(0, 3).map((n) => n.trim()).join(",");
+  return FALLBACK_RGB;
+}
+
 export function CursorTrail() {
   const ref = useRef<HTMLCanvasElement>(null);
 
@@ -14,6 +34,8 @@ export function CursorTrail() {
     if (!cvs) return;
     const ctx = cvs.getContext("2d");
     if (!ctx) return;
+
+    const G = accentRgb(cvs);
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let W = window.innerWidth;
@@ -67,7 +89,7 @@ export function CursorTrail() {
           ctx.beginPath();
           ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
           ctx.lineTo(trail[i].x,     trail[i].y);
-          ctx.strokeStyle = `rgba(124,252,0,${alpha})`;
+          ctx.strokeStyle = `rgba(${G},${alpha})`;
           ctx.lineWidth   = 1;
           ctx.setLineDash([2, 5]);
           ctx.stroke();
@@ -78,7 +100,7 @@ export function CursorTrail() {
       /* Dotted ring cursor */
       ctx.beginPath();
       ctx.arc(cx, cy, 10, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(124,252,0,0.72)";
+      ctx.strokeStyle = `rgba(${G},0.72)`;
       ctx.lineWidth   = 1;
       ctx.setLineDash([2.5, 4]);
       ctx.stroke();
@@ -87,7 +109,7 @@ export function CursorTrail() {
       /* Center dot */
       ctx.beginPath();
       ctx.arc(cx, cy, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(124,252,0,0.92)";
+      ctx.fillStyle = `rgba(${G},0.92)`;
       ctx.fill();
 
       raf = requestAnimationFrame(tick);

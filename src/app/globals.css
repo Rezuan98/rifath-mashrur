@@ -45,11 +45,29 @@
   100%      { transform: translateY(400%);  opacity: 0; }
 }
 
-/* ── Custom cursor — scoped to marketing pages only ───────────── */
-.marketing-zone *,
-.marketing-zone *::before,
-.marketing-zone *::after {
-  cursor: none !important;
+/* ── Custom cursor — scoped to marketing pages, mouse devices only ──
+   CursorTrail bails out unless (pointer: fine), so hiding the native
+   cursor anywhere else leaves touch/hybrid users with no cursor at all. */
+@media (pointer: fine) {
+  .marketing-zone *,
+  .marketing-zone *::before,
+  .marketing-zone *::after {
+    cursor: none !important;
+  }
+}
+
+/* ── Anchor offset ────────────────────────────────────────────────
+   The nav is fixed, so "/#work" and friends would otherwise scroll the
+   section heading underneath it. Clears the tallest (unscrolled) bar. */
+html {
+  scroll-behavior: smooth;
+}
+.marketing-zone section[id],
+.marketing-zone [id]:target {
+  scroll-margin-top: 96px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 
 body {

@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import type { Achievement } from "@/lib/types";
+import { isRenderableImage } from "@/lib/image";
 
 async function deleteAchievement(formData: FormData) {
   "use server";
@@ -56,8 +57,13 @@ export default async function AdminAchievementsPage() {
                       className="flex items-center gap-4 rounded-xl border border-cream/[0.07] bg-cream/[0.02] p-4"
                     >
                       {/* thumbnail */}
-                      <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-cream/[0.05] border border-cream/[0.07]">
-                        <img src={a.imageUrl} alt={a.title} className="w-full h-full object-cover" />
+                      <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-cream/[0.05] border border-cream/[0.07] flex items-center justify-center">
+                        {isRenderableImage(a.imageUrl) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={a.imageUrl} alt={a.title} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-red-400/70 text-[9px] text-center leading-tight px-1">No image</span>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-cream text-sm font-medium truncate">{a.title}</p>
